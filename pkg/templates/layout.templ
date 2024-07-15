@@ -1,0 +1,24 @@
+package templates
+
+templ header(title string) {
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+		<title>{ title } </title>
+	</head>
+}
+
+templ footer() {
+	<footer></footer>
+}
+
+templ Layout(contents templ.Component, title string, lang string) {
+	<!DOCTYPE html>
+	<html lang={ lang }>
+		@header(title)
+		<body>
+			@contents
+		</body>
+		@footer()
+	</html>
+}

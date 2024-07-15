@@ -1,8 +1,11 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
+
+	"gitlab.com/xapitan/homecomp/pkg/templates"
 )
 
 func main() {
@@ -15,5 +18,7 @@ func main() {
 }
 
 func peperino(w http.ResponseWriter, _ *http.Request) {
-	fmt.Fprintf(w, "This is some %s data", "shitty in function")
+	innerContent := templates.Testing("Broter")
+	component := templates.Layout(innerContent, "This is some good title", "en")
+	component.Render(context.Background(), w)
 }
