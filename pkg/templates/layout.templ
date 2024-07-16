@@ -5,6 +5,7 @@ templ header(title string) {
 		<meta charset="utf-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 		<title>{ title } </title>
+		<link rel="stylesheet" href="./public/css/main.css"/>
 	</head>
 }
 
@@ -16,7 +17,7 @@ templ Layout(contents templ.Component, title string, lang string) {
 	<!DOCTYPE html>
 	<html lang={ lang }>
 		@header(title)
-		<body>
+		<body class="bg-green-200">
 			@contents
 		</body>
 		@footer()
