@@ -1,4 +1,4 @@
-module gitlab.com/xapitan/homecomp
+module homecomp
 
 go 1.22.5
 

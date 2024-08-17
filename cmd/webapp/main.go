@@ -3,10 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+	"homecomp/pkg/handlers/auth"
+	"homecomp/pkg/templates"
 	"net/http"
-
-	"gitlab.com/xapitan/homecomp/pkg/handlers/auth"
-	"gitlab.com/xapitan/homecomp/pkg/templates"
 )
 
 func main() {
@@ -25,6 +24,6 @@ func main() {
 
 func peperino(w http.ResponseWriter, _ *http.Request) {
 	innerContent := templates.Testing("Broter")
-	component := templates.Layout(innerContent, "This is some good title", "en")
+	component := templates.Layout(innerContent)
 	component.Render(context.Background(), w)
 }

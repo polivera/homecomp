@@ -2,9 +2,8 @@ package auth
 
 import (
 	"context"
+	"homecomp/pkg/templates"
 	"net/http"
-
-	"gitlab.com/xapitan/homecomp/pkg/templates"
 )
 
 type LoginHandler interface {
@@ -24,7 +23,7 @@ func (l *loginHaddler) Handle(mux *http.ServeMux) {
 }
 
 func (l *loginHaddler) showLoginForm(w http.ResponseWriter, _ *http.Request) {
-	innerContent := templates.Testing("mr. cat")
-	component := templates.Layout(innerContent, "This is some good title", "en")
+	innerContent := templates.Testing("aijfosaijdfosaijdfoijs")
+	component := templates.Layout(innerContent)
 	component.Render(context.Background(), w)
 }
