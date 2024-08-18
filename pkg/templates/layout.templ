@@ -30,7 +30,7 @@ templ emptyLayout(contents templ.Component, title string, lang string) {
 	<!DOCTYPE html>
 	<html lang={ lang }>
 		@header(title)
-		<body class="flex flex-col h-screen justify-center">
+		<body class="flex flex-col h-screen justify-center bg-hc-bg-light dark:bg-hc-bg-dark">
 			@contents
 		</body>
 		@footer()
