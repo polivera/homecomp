@@ -3,27 +3,24 @@ package main
 import (
 	"context"
 	"fmt"
-	"homecomp/pkg/handlers/auth"
-	"homecomp/pkg/templates"
 	"net/http"
+
+	"homecomp/pkg/configs"
+	"homecomp/pkg/handlers/auth"
 )
 
 func main() {
 	mux := http.NewServeMux()
+	conf, err := configs.NewConfig()
+	if err != nil {
+		panic("cannot load configuration")
+	}
+	ctx := context.Background()
 
-	loginHandler := auth.NewLoginHandler()
+	auth.NewLoginHandler(conf, ctx).Handle(mux)
 
-	loginHandler.Handle(mux)
 	mux.Handle("GET /public/", http.StripPrefix("/public/", http.FileServer(http.Dir("./public"))))
-
-	mux.HandleFunc("GET /hello", peperino)
 
 	fmt.Println("Starting server on port 8008")
 	http.ListenAndServe("localhost:8008", mux)
-}
-
-func peperino(w http.ResponseWriter, _ *http.Request) {
-	innerContent := templates.Testing("Broter")
-	component := templates.Layout(innerContent)
-	component.Render(context.Background(), w)
 }

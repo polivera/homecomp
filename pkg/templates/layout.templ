@@ -1,5 +1,7 @@
 package templates
 
+import "homecomp/pkg/configs"
+
 templ header(title string) {
 	<head>
 		<meta charset="utf-8"/>
@@ -13,17 +15,32 @@ templ footer() {
 	<footer></footer>
 }
 
-templ layout(contents templ.Component, title string, lang string) {
+templ homeLayout(contents templ.Component, title string, lang string) {
 	<!DOCTYPE html>
 	<html lang={ lang }>
 		@header(title)
-		<body class="bg-green-200">
+		<body class="bg-red-500">
 			@contents
 		</body>
 		@footer()
 	</html>
 }
 
-func Layout(content templ.Component) templ.Component {
-	return layout(content, "fooo", "barbaz")
+templ emptyLayout(contents templ.Component, title string, lang string) {
+	<!DOCTYPE html>
+	<html lang={ lang }>
+		@header(title)
+		<body class="flex flex-col h-screen justify-center">
+			@contents
+		</body>
+		@footer()
+	</html>
+}
+
+func HomeLayout(content templ.Component, conf configs.Config) templ.Component {
+	return homeLayout(content, conf.PageTitle, conf.PageLanguage)
+}
+
+func EmptyLayout(content templ.Component, conf configs.Config) templ.Component {
+	return emptyLayout(content, conf.PageTitle, conf.PageLanguage)
 }

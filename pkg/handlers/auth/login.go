@@ -2,8 +2,10 @@ package auth
 
 import (
 	"context"
-	"homecomp/pkg/templates"
 	"net/http"
+
+	"homecomp/pkg/configs"
+	"homecomp/pkg/templates"
 )
 
 type LoginHandler interface {
@@ -11,10 +13,16 @@ type LoginHandler interface {
 	showLoginForm(w http.ResponseWriter, _ *http.Request)
 }
 
-type loginHaddler struct{}
+type loginHaddler struct {
+	conf configs.Config
+	ctx  context.Context
+}
 
-func NewLoginHandler() LoginHandler {
-	return &loginHaddler{}
+func NewLoginHandler(cnf configs.Config, ctx context.Context) LoginHandler {
+	return &loginHaddler{
+		conf: cnf,
+		ctx:  ctx,
+	}
 }
 
 // Login implements LoginHandler.
@@ -23,7 +31,6 @@ func (l *loginHaddler) Handle(mux *http.ServeMux) {
 }
 
 func (l *loginHaddler) showLoginForm(w http.ResponseWriter, _ *http.Request) {
-	innerContent := templates.Testing("aijfosaijdfosaijdfoijs")
-	component := templates.Layout(innerContent)
-	component.Render(context.Background(), w)
+	component := templates.LoginPage(l.conf)
+	component.Render(l.ctx, w)
 }
