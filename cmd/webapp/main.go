@@ -22,5 +22,5 @@ func main() {
 	mux.Handle("GET /public/", http.StripPrefix("/public/", http.FileServer(http.Dir("./public"))))
 
 	fmt.Println("Starting server on port 8008")
-	http.ListenAndServe("localhost:8008", mux)
+	http.ListenAndServe(":8008", mux)
 }

@@ -1,16 +1,34 @@
 package templates
 
-import "homecomp/pkg/configs"
+import (
+	"homecomp/pkg/configs"
+	"homecomp/pkg/templates/components"
+)
 
-templ login() {
-	<div class="bg-sky-800">
-		Guachiturren!!!
+templ login(componentMap map[string]components.InputData) {
+	<div
+		class=" max-w-[30rem] w-full mx-auto
+                bg-hc-bg-alt-light dark:bg-hc-bg-alt-dark
+                border border-hc-border-light dark:border-hc-border-dark"
+	>
+		<div class="p-[2.5rem]">
+			<h2 class="text-[1.5rem] w-full content-center text-center mb-[1.5rem]">Login Form</h2>
+			@components.FormInput(componentMap["email"], components.InputText)
+		</div>
 	</div>
 }
 
 func LoginPage(conf configs.Config) templ.Component {
+	componentMap := make(map[string]components.InputData)
+	componentMap["email"] = components.InputData{
+		ID:          "email",
+		Label:       "Email address",
+		Name:        "email",
+		Placeholder: "your@email.com",
+		Value:       "",
+	}
 	return EmptyLayout(
-		login(),
+		login(componentMap),
 		conf,
 	)
 }

@@ -1,0 +1,11 @@
+package components
+
+templ FormInput(data InputData, inputFunc func(InputData) templ.Component) {
+	<div class="flex flex-col">
+		<label
+			for={ data.ID }
+			class="text-[0.875rem] mb-[0.5rem]"
+		>{ data.Label }</label>
+		@inputFunc(data)
+	</div>
+}

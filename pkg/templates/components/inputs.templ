@@ -1,0 +1,31 @@
+package components
+
+type InputType templ.Component
+
+type InputData struct {
+	ID          string
+	Name        string
+	Value       string
+	Placeholder string
+	Label       string
+}
+
+const commonInputClasses = `
+            bg-hc-bg-alt-light dark:bg-hc-bg-alt-dark
+            border border-hc-border-light dark:border-hc-border-dark
+            px-[0.75rem] py-[0.5rem]
+`
+
+templ InputText(data InputData) {
+	<input
+		type="email"
+		name={ data.Name }
+		id={ data.ID }
+		placeholder={ data.Placeholder }
+		class={ commonInputClasses }
+	/>
+}
+
+// func InputText(data InputData) InputType {
+// return inputText(data)
+// }
