@@ -14,6 +14,7 @@ templ login(componentMap map[string]components.InputData) {
 		<div class="p-[2.5rem]">
 			<h2 class="text-[1.5rem] w-full content-center text-center mb-[1.5rem]">Login Form</h2>
 			@components.FormInput(componentMap["email"], components.InputText)
+			@components.FormInput(componentMap["password"], components.InputPassword)
 		</div>
 	</div>
 }
@@ -25,6 +26,13 @@ func LoginPage(conf configs.Config) templ.Component {
 		Label:       "Email address",
 		Name:        "email",
 		Placeholder: "your@email.com",
+		Value:       "",
+	}
+	componentMap["password"] = components.InputData{
+		ID:          "password",
+		Label:       "Password",
+		Name:        "password",
+		Placeholder: "Your Password",
 		Value:       "",
 	}
 	return EmptyLayout(

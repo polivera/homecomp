@@ -11,14 +11,24 @@ type InputData struct {
 }
 
 const commonInputClasses = `
-            bg-hc-bg-alt-light dark:bg-hc-bg-alt-dark
-            border border-hc-border-light dark:border-hc-border-dark
-            px-[0.75rem] py-[0.5rem]
+            bg-hc-bg-light dark:bg-hc-bg-dark
+            border border-hc-border-light dark:border-hc-border-dark rounded
+            px-[0.75rem] py-[0.5rem] text-[0.87rem]
 `
 
 templ InputText(data InputData) {
 	<input
 		type="email"
+		name={ data.Name }
+		id={ data.ID }
+		placeholder={ data.Placeholder }
+		class={ commonInputClasses }
+	/>
+}
+
+templ InputPassword(data InputData) {
+	<input
+		type="password"
 		name={ data.Name }
 		id={ data.ID }
 		placeholder={ data.Placeholder }
