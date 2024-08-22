@@ -1,0 +1,36 @@
+package components
+
+type ButtonType uint8
+type ButtonClass uint8
+
+const (
+	ButtonTypeSubmit ButtonType = iota
+	ButtonTypeReset
+	ButtonTypeButton
+
+	ButtonClassPrimary ButtonClass = iota
+	ButtonClassDelete
+)
+
+type ButtonParam struct {
+	BtnType  ButtonType
+	BtnClass ButtonClass
+	BtnText  string
+}
+
+templ simpleButton(btnParams ButtonParam) {
+	<button
+		type="button"
+		class={ "w-full cursor-pointer rounded px-4 py-2 bg-hc-primary" }
+	>
+		{ btnParams.BtnText }
+	</button>
+}
+
+func SubmitButton(text string) templ.Component {
+	var params = ButtonParam{
+		BtnText: text,
+		BtnType: ButtonTypeSubmit,
+	}
+	return simpleButton(params)
+}

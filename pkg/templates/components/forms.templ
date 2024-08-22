@@ -9,3 +9,9 @@ templ FormInput(data InputData, inputFunc func(InputData) templ.Component) {
 		@inputFunc(data)
 	</div>
 }
+
+templ FormButton(text string) {
+	<div class="mt-8">
+		@SubmitButton(text)
+	</div>
+}

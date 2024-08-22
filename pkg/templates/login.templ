@@ -15,6 +15,7 @@ templ login(componentMap map[string]components.InputData) {
 			<h2 class="text-[1.5rem] w-full content-center text-center mb-[1.5rem]">Login Form</h2>
 			@components.FormInput(componentMap["email"], components.InputText)
 			@components.FormInput(componentMap["password"], components.InputPassword)
+			@components.FormButton("Log In")
 		</div>
 	</div>
 }
