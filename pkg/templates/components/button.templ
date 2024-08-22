@@ -18,9 +18,20 @@ type ButtonParam struct {
 	BtnText  string
 }
 
+func (bp *ButtonParam) getButtonType() string {
+	switch bp.BtnType {
+	case ButtonTypeSubmit:
+		return "submit"
+	case ButtonTypeReset:
+		return "reset"
+	default:
+		return "button"
+	}
+}
+
 templ simpleButton(btnParams ButtonParam) {
 	<button
-		type="button"
+		type={ btnParams.getButtonType() }
 		class={ "w-full cursor-pointer rounded px-4 py-2 bg-hc-primary" }
 	>
 		{ btnParams.BtnText }
