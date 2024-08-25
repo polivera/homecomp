@@ -1,11 +1,13 @@
 package auth
 
 import (
-	"context"
-	"fmt"
 	"net/http"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"homecomp/internal/configs"
+	"homecomp/internal/database"
+	"homecomp/internal/repositories"
 	logintemplate "homecomp/pkg/templates/login"
 )
 
@@ -16,13 +18,13 @@ type LoginHandler interface {
 
 type loginHaddler struct {
 	conf configs.Config
-	ctx  context.Context
+	db   database.DBCon
 }
 
-func NewLoginHandler(cnf configs.Config, ctx context.Context) LoginHandler {
+func NewLoginHandler(cnf configs.Config, db database.DBCon) LoginHandler {
 	return &loginHaddler{
 		conf: cnf,
-		ctx:  ctx,
+		db:   db,
 	}
 }
 
@@ -30,29 +32,44 @@ func NewLoginHandler(cnf configs.Config, ctx context.Context) LoginHandler {
 func (l *loginHaddler) Handle(mux *http.ServeMux) {
 	mux.HandleFunc("GET /login", l.showLoginForm)
 	mux.HandleFunc("POST /login", l.loginSubmit)
-	mux.HandleFunc("GET /garompeta", l.garompeta)
 }
 
-func (l *loginHaddler) garompeta(w http.ResponseWriter, _ *http.Request) {
-	w.Write([]byte("asofjsaoijfdsaf"))
-
-}
-
-func (l *loginHaddler) showLoginForm(w http.ResponseWriter, _ *http.Request) {
+func (l *loginHaddler) showLoginForm(w http.ResponseWriter, r *http.Request) {
 	component := logintemplate.LoginPage(l.conf.Page)
-	component.Render(l.ctx, w)
+	component.Render(r.Context(), w)
 }
 
 func (l *loginHaddler) loginSubmit(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue(logintemplate.EmailField)
 	passwd := r.FormValue(logintemplate.PasswordField)
-	fmt.Println(email)
-	component := logintemplate.LoginForm(
-		logintemplate.LoginFormFields{
-			Email: passwd,
-		},
-	)
-	component.Render(l.ctx, w)
+
+	// TODO: validate form data here
+	// TODO: Work on form error
+
+	hashPass, err := bcrypt.GenerateFromPassword([]byte(passwd), bcrypt.DefaultCost)
+	if err != nil {
+		w.Write([]byte("some error"))
+		return
+	}
+	repo := repositories.NewUserRepo(r.Context(), l.db)
+
+	//TODO: Finish login with a select
+	err = repo.CreateUser(repositories.UserRow{Email: email, Password: string(hashPass)})
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	// TODO: How to eat cookies
+
+	w.Write([]byte("done"))
+
+	// component := logintemplate.LoginForm(
+	// 	logintemplate.LoginFormFields{
+	// 		Email: passwd,
+	// 	},
+	// )
+	// component.Render(l.ctx, w)
 
 	// w.Header().Add("HX-Redirect", "/garompeta")
 }

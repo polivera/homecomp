@@ -17,3 +17,6 @@ tailwind-build:
 
 up-database:
 	docker compose up -d --force-recreate database
+
+db-connect:
+	docker exec -it homecomp-database-1 mariadb -u $(HCMP_DB_USER) -p$(HCMP_DB_PASS)

@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 
@@ -10,6 +11,9 @@ import (
 )
 
 type DBCon interface {
+	GetDB() *sql.DB
+	Query(ctx context.Context, query string) (*sql.Rows, error)
+	Prepare(ctx context.Context, query string) (*sql.Stmt, error)
 	Close()
 }
 
@@ -37,8 +41,16 @@ func NewConnection(conf configs.DBConfig) (DBCon, error) {
 	}, err
 }
 
-func (dcn *dbCon) Query(query string) (*sql.Rows, error) {
-	return dcn.db.Query(query)
+func (dcn *dbCon) GetDB() *sql.DB {
+	return dcn.db
+}
+
+func (dcn *dbCon) Query(ctx context.Context, query string) (*sql.Rows, error) {
+	return dcn.db.QueryContext(ctx, query)
+}
+
+func (dcn *dbCon) Prepare(ctx context.Context, query string) (*sql.Stmt, error) {
+	return dcn.db.PrepareContext(ctx, query)
 }
 
 func (dcn *dbCon) Close() {
