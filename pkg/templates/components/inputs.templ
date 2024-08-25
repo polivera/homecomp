@@ -3,7 +3,6 @@ package components
 type InputType templ.Component
 
 type InputData struct {
-	ID          string
 	Name        string
 	Value       string
 	Placeholder string
@@ -20,9 +19,10 @@ templ InputText(data InputData) {
 	<input
 		type="email"
 		name={ data.Name }
-		id={ data.ID }
+		id={ data.Name }
 		placeholder={ data.Placeholder }
 		class={ commonInputClasses }
+		value={ data.Value }
 	/>
 }
 
@@ -30,7 +30,7 @@ templ InputPassword(data InputData) {
 	<input
 		type="password"
 		name={ data.Name }
-		id={ data.ID }
+		id={ data.Name }
 		placeholder={ data.Placeholder }
 		class={ commonInputClasses }
 	/>

@@ -1,6 +1,6 @@
 package templates
 
-import "homecomp/pkg/configs"
+import "homecomp/internal/configs"
 
 templ header(title string) {
 	<head>
@@ -43,10 +43,10 @@ templ emptyLayout(contents templ.Component, title string, lang string) {
 	</html>
 }
 
-func HomeLayout(content templ.Component, conf configs.Config) templ.Component {
+func HomeLayout(content templ.Component, conf configs.PageConfig) templ.Component {
 	return homeLayout(content, conf.PageTitle, conf.PageLanguage)
 }
 
-func EmptyLayout(content templ.Component, conf configs.Config) templ.Component {
+func EmptyLayout(content templ.Component, conf configs.PageConfig) templ.Component {
 	return emptyLayout(content, conf.PageTitle, conf.PageLanguage)
 }

@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"net/http"
 
-	"homecomp/pkg/configs"
+	"homecomp/internal/configs"
 	"homecomp/pkg/handlers/auth"
 )
 
 func main() {
 	mux := http.NewServeMux()
 	conf, err := configs.NewConfig()
+	fmt.Println(conf)
 	if err != nil {
 		panic("cannot load configuration")
 	}

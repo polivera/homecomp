@@ -9,7 +9,7 @@ templ FormWrapper(actionPath string) {
 templ FormInput(data InputData, inputFunc func(InputData) templ.Component) {
 	<div class="flex flex-col mb-4">
 		<label
-			for={ data.ID }
+			for={ data.Name }
 			class="text-sm mb-2"
 		>{ data.Label }</label>
 		@inputFunc(data)
