@@ -6,7 +6,7 @@ import (
 
 	"homecomp/internal/configs"
 	"homecomp/internal/database"
-	"homecomp/pkg/handlers/auth"
+	"homecomp/pkg/web/handlers"
 )
 
 func main() {
@@ -20,7 +20,7 @@ func main() {
 		panic("cannot connect to database")
 	}
 
-	auth.NewLoginHandler(conf, db).Handle(mux)
+	handlers.NewLoginHandler(conf, db).Handle(mux)
 
 	mux.Handle("GET /public/", http.StripPrefix("/public/", http.FileServer(http.Dir("./public"))))
 

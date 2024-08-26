@@ -1,5 +1,5 @@
 module.exports = {
-  content: ["./pkg/templates/**/*.templ"],
+  content: ["./pkg/web/templates/**/*.templ"],
   theme: {
     extend: {
       colors: {

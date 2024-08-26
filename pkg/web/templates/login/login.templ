@@ -2,19 +2,9 @@ package login
 
 import (
 	"homecomp/internal/configs"
-	"homecomp/pkg/templates"
-	"homecomp/pkg/templates/components"
-)
-
-type LoginFormFields struct {
-	Email         string
-	EmailError    string
-	PasswordError string
-}
-
-const (
-	EmailField    string = "email"
-	PasswordField string = "password"
+	loginform "homecomp/internal/forms/login"
+	"homecomp/pkg/web/templates"
+	"homecomp/pkg/web/templates/components"
 )
 
 templ login(componentMap map[string]components.InputData) {
@@ -40,32 +30,32 @@ templ loginForm(componentMap map[string]components.InputData) {
 
 func LoginPage(conf configs.PageConfig) templ.Component {
 	return templates.EmptyLayout(
-		login(getComponentMap(LoginFormFields{})),
+		login(getComponentMap(loginform.LoginForm{})),
 		conf,
 	)
 }
 
-func LoginForm(fields LoginFormFields) templ.Component {
+func LoginForm(fields loginform.LoginForm) templ.Component {
 	return loginForm(getComponentMap(fields))
 }
 
-func getComponentMap(fields LoginFormFields) map[string]components.InputData {
-	componentMap := make(map[string]components.InputData)
-	componentMap[EmailField] = components.InputData{
+func getComponentMap(fields loginform.LoginForm) map[string]components.InputData {
+	componentMap := make(map[string]components.InputData, 2)
+	componentMap[loginform.FieldEmail] = components.InputData{
 		Label:       "Email address",
 		Required:    true,
-		Name:        EmailField,
+		Name:        loginform.FieldEmail,
 		Placeholder: "your@email.com",
 		Value:       fields.Email,
-		Error:       fields.EmailError,
+		Error:       fields.Errors[loginform.FieldEmail],
 	}
-	componentMap[PasswordField] = components.InputData{
+	componentMap[loginform.FieldPassword] = components.InputData{
 		Label:       "Password",
 		Required:    true,
-		Name:        PasswordField,
+		Name:        loginform.FieldPassword,
 		Placeholder: "Your Password",
 		Value:       "",
-		Error:       fields.PasswordError,
+		Error:       fields.Errors[loginform.FieldPassword],
 	}
 	return componentMap
 }

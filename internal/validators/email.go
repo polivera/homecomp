@@ -5,14 +5,11 @@ import (
 	"regexp"
 )
 
-func EmailValidator(email string) (bool, []error) {
-	errorList := make([]error, 2)
-
+func IsEmailValid(email string) error {
 	if !emailStringValidator(email) {
-		errorList = append(errorList, fmt.Errorf("invalid email address"))
+		return fmt.Errorf("invalid email address")
 	}
-
-	return len(errorList) == 0, errorList
+	return nil
 }
 
 func emailStringValidator(email string) bool {
