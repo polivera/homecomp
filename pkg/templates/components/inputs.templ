@@ -4,9 +4,11 @@ type InputType templ.Component
 
 type InputData struct {
 	Name        string
+	Required    bool
 	Value       string
 	Placeholder string
 	Label       string
+	Error       string
 }
 
 const commonInputClasses = `

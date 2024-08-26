@@ -6,13 +6,31 @@ templ FormWrapper(actionPath string) {
 	</form>
 }
 
+templ label(labelFor string, labelText string, required bool) {
+	if required {
+		<label
+			for={ labelFor }
+			class="text-sm mb-2 after:content-['*'] after:ml-0.5 after:text-hc-alert"
+		>{ labelText }</label>
+	} else {
+		<label
+			for={ labelFor }
+			class="text-sm mb-2"
+		>{ labelText }</label>
+	}
+}
+
+templ errWrapper(errData string) {
+	<div class="text-hc-alert text-sm">
+		{ errData }
+	</div>
+}
+
 templ FormInput(data InputData, inputFunc func(InputData) templ.Component) {
 	<div class="flex flex-col mb-4">
-		<label
-			for={ data.Name }
-			class="text-sm mb-2"
-		>{ data.Label }</label>
+		@label(data.Name, data.Label, data.Required)
 		@inputFunc(data)
+		@errWrapper(data.Error)
 	</div>
 }
 

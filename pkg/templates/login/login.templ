@@ -53,15 +53,19 @@ func getComponentMap(fields LoginFormFields) map[string]components.InputData {
 	componentMap := make(map[string]components.InputData)
 	componentMap[EmailField] = components.InputData{
 		Label:       "Email address",
+		Required:    true,
 		Name:        EmailField,
 		Placeholder: "your@email.com",
 		Value:       fields.Email,
+		Error:       fields.EmailError,
 	}
 	componentMap[PasswordField] = components.InputData{
 		Label:       "Password",
+		Required:    true,
 		Name:        PasswordField,
 		Placeholder: "Your Password",
 		Value:       "",
+		Error:       fields.PasswordError,
 	}
 	return componentMap
 }

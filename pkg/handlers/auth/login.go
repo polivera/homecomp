@@ -1,13 +1,11 @@
 package auth
 
 import (
+	"fmt"
 	"net/http"
-
-	"golang.org/x/crypto/bcrypt"
 
 	"homecomp/internal/configs"
 	"homecomp/internal/database"
-	"homecomp/internal/repositories"
 	logintemplate "homecomp/pkg/templates/login"
 )
 
@@ -42,27 +40,28 @@ func (l *loginHaddler) showLoginForm(w http.ResponseWriter, r *http.Request) {
 func (l *loginHaddler) loginSubmit(w http.ResponseWriter, r *http.Request) {
 	email := r.FormValue(logintemplate.EmailField)
 	passwd := r.FormValue(logintemplate.PasswordField)
+	fmt.Println(passwd)
 
 	// TODO: validate form data here
+
+	component := logintemplate.LoginForm(
+		logintemplate.LoginFormFields{
+			Email:         email,
+			EmailError:    "some email error",
+			PasswordError: "some password error",
+		},
+	)
+	component.Render(r.Context(), w)
 	// TODO: Work on form error
 
-	hashPass, err := bcrypt.GenerateFromPassword([]byte(passwd), bcrypt.DefaultCost)
-	if err != nil {
-		w.Write([]byte("some error"))
-		return
-	}
-	repo := repositories.NewUserRepo(r.Context(), l.db)
-
-	//TODO: Finish login with a select
-	err = repo.CreateUser(repositories.UserRow{Email: email, Password: string(hashPass)})
-	if err != nil {
-		w.Write([]byte(err.Error()))
-		return
-	}
-
+	// hashPass, err := bcrypt.GenerateFromPassword([]byte(passwd), bcrypt.DefaultCost)
+	// if err != nil {
+	// 	w.Write([]byte("some error"))
+	// 	return
+	// }
 	// TODO: How to eat cookies
 
-	w.Write([]byte("done"))
+	// w.Write([]byte("done"))
 
 	// component := logintemplate.LoginForm(
 	// 	logintemplate.LoginFormFields{
