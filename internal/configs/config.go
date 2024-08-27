@@ -1,12 +1,15 @@
 package configs
 
 import (
+	"time"
+
 	"github.com/kelseyhightower/envconfig"
 )
 
 type AppConfig struct {
-	Host string `envconfig:"HCMP_APP_HOST"`
-	Port uint32 `envconfig:"HCMP_APP_PORT"`
+	Host    string        `envconfig:"HCMP_APP_HOST"`
+	Port    uint32        `envconfig:"HCMP_APP_PORT"`
+	Timeout time.Duration `envconfig:"HCMP_APP_TIMEOUT" default:"10s"`
 }
 
 type PageConfig struct {

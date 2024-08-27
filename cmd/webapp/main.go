@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -10,21 +11,25 @@ import (
 )
 
 func main() {
-	mux := http.NewServeMux()
 	conf, err := configs.NewConfig()
+	ctx, cancel := context.WithTimeout(context.Background(), conf.App.Timeout)
+	defer cancel()
+
+	mux := http.NewServeMux()
 	if err != nil {
-		panic("cannot load configuration")
+		panic(fmt.Sprintf("cannot load configuration: %s", err.Error()))
 	}
 	db, err := database.NewConnection(conf.Database)
 	if err != nil {
 		panic("cannot connect to database")
 	}
 
-	handlers.NewLoginHandler(conf, db).Handle(mux)
+	handlers.NewLoginHandler(ctx, conf, db).Handle(mux)
 
 	mux.Handle("GET /public/", http.StripPrefix("/public/", http.FileServer(http.Dir("./public"))))
 
 	serverAddress := fmt.Sprintf("%s:%d", conf.App.Host, conf.App.Port)
+
 	fmt.Printf("Starting server on %s\n", serverAddress)
 	err = http.ListenAndServe(serverAddress, mux)
 	if err != nil {

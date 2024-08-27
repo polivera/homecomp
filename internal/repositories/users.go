@@ -1,13 +1,23 @@
 package repositories
 
 import (
+	"fmt"
+
 	"golang.org/x/net/context"
 
 	"homecomp/internal/database"
 )
 
+const (
+	UserTableName   string = "users"
+	UserFieldID     string = "id"
+	UserFieldEmail  string = "email"
+	UserFieldPasswd string = "password"
+)
+
 type UserRepo interface {
 	CreateUser(data UserRow) error
+	GetUserByEmail(email string) UserRow
 }
 
 type UserRow struct {
@@ -29,7 +39,7 @@ func NewUserRepo(ctx context.Context, db database.DBCon) UserRepo {
 }
 
 func (ur *userRepo) CreateUser(data UserRow) error {
-	query := "insert into users(email, password) values(?, ?)"
+	query := fmt.Sprintf("insert into %s(%s, %s) values(?, ?)", UserTableName, UserFieldEmail, UserFieldPasswd)
 	stmt, err := ur.db.Prepare(ur.ctx, query)
 	if err != nil {
 		return err
@@ -38,4 +48,15 @@ func (ur *userRepo) CreateUser(data UserRow) error {
 
 	_, err = stmt.Exec(data.Email, data.Password)
 	return err
+}
+
+func (ur *userRepo) GetUserByEmail(email string) UserRow {
+	var id uint32
+	query := fmt.Sprintf("select %s from %s where %s = ?", UserFieldID, UserTableName, UserFieldEmail)
+	ur.db.GetDB().QueryRow(query, email).Scan(&id)
+
+	return UserRow{
+		ID:    id,
+		Email: email,
+	}
 }

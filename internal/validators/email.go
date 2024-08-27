@@ -1,20 +1,19 @@
 package validators
 
 import (
-	"fmt"
 	"regexp"
+
+	"homecomp/internal/repositories"
 )
 
-func IsEmailValid(email string) error {
-	if !emailStringValidator(email) {
-		return fmt.Errorf("invalid email address")
-	}
-	return nil
-}
-
-func emailStringValidator(email string) bool {
+func IsEmailStringValid(email string) bool {
 	const emailRegexPattern = `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
 
 	re := regexp.MustCompile(emailRegexPattern)
 	return re.MatchString(email)
+}
+
+func IsEmailNew(email string, repo repositories.UserRepo) bool {
+	user := repo.GetUserByEmail(email)
+	return user.ID == 0
 }

@@ -1,6 +1,9 @@
 package forms
 
-import "homecomp/internal/validators"
+import (
+	"homecomp/internal/repositories"
+	"homecomp/internal/validators"
+)
 
 const (
 	FieldEmail    string = "email"
@@ -14,18 +17,20 @@ type LoginForm struct {
 	isValid bool
 }
 
-func (lf *LoginForm) Validate() {
+func (lf *LoginForm) Validate(repo repositories.UserRepo) {
 	lf.isValid = true
 	lf.Errors = make(map[string]string, 2)
-	emailErr := validators.IsEmailValid(lf.Email)
-	if emailErr != nil {
-		lf.Errors[FieldEmail] = emailErr.Error()
+
+	if !validators.IsEmailStringValid(lf.Email) {
+		lf.Errors[FieldEmail] = "Email address is invalid"
+		lf.isValid = false
+	} else if !validators.IsEmailNew(lf.Email, repo) {
+		lf.Errors[FieldEmail] = "This email is already taken"
 		lf.isValid = false
 	}
 
-	passErr := validators.IsValidPassword(lf.Passwd)
-	if passErr != nil {
-		lf.Errors[FieldPassword] = passErr.Error()
+	if validators.IsPasswordLenValid(lf.Passwd) {
+		lf.Errors[FieldPassword] = "Password should be at least 8 chars long"
 		lf.isValid = false
 	}
 }

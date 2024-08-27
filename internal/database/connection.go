@@ -53,6 +53,10 @@ func (dcn *dbCon) Prepare(ctx context.Context, query string) (*sql.Stmt, error) 
 	return dcn.db.PrepareContext(ctx, query)
 }
 
+func (dcn *dbCon) QueryRow(ctx context.Context, query string, args ...any) *sql.Row {
+	return dcn.db.QueryRowContext(ctx, query, args)
+}
+
 func (dcn *dbCon) Close() {
 	err := dcn.db.Close()
 	if err != nil {
