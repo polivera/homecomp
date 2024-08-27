@@ -7,8 +7,8 @@ func IsPasswordLenValid(passwd string) bool {
 }
 
 func IsPasswordCharsValid(passwd string) bool {
-	const passRegex = ``
-
-	re := regexp.MustCompile(passRegex)
-	return re.MatchString(passwd)
+	return regexp.MustCompile(`[^a-zA-Z\d]`).MatchString(passwd) &&
+		regexp.MustCompile(`[A-Z]`).MatchString(passwd) &&
+		regexp.MustCompile(`\d`).MatchString(passwd) &&
+		regexp.MustCompile(`[a-z]`).MatchString(passwd)
 }
