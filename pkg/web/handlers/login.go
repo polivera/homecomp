@@ -1,11 +1,9 @@
 package handlers
 
 import (
-	"context"
 	"net/http"
 
 	"homecomp/internal/configs"
-	"homecomp/internal/database"
 	loginform "homecomp/internal/forms/login"
 	"homecomp/internal/repositories"
 	logintemplate "homecomp/pkg/web/templates/login"
@@ -17,19 +15,14 @@ type LoginHandler interface {
 }
 
 type loginHaddler struct {
-	conf      configs.Config
-	db        database.DBCon
-	ctx       context.Context
-	cancelCtx context.CancelFunc
+	conf     configs.Config
+	userRepo repositories.UserRepo
 }
 
-func NewLoginHandler(ctx context.Context, cnf configs.Config, db database.DBCon) LoginHandler {
-	ctx, cancel := context.WithCancel(ctx)
+func NewLoginHandler(cnf configs.Config, userRepo repositories.UserRepo) LoginHandler {
 	return &loginHaddler{
-		conf:      cnf,
-		db:        db,
-		ctx:       ctx,
-		cancelCtx: cancel,
+		conf:     cnf,
+		userRepo: userRepo,
 	}
 }
 
@@ -40,19 +33,18 @@ func (l *loginHaddler) Handle(mux *http.ServeMux) {
 
 func (l *loginHaddler) showLoginForm(w http.ResponseWriter, r *http.Request) {
 	component := logintemplate.LoginPage(l.conf.Page)
-	component.Render(l.ctx, w)
+	component.Render(r.Context(), w)
 }
 
 func (l *loginHaddler) loginSubmit(w http.ResponseWriter, r *http.Request) {
-	repo := repositories.NewUserRepo(r.Context(), l.db)
 	form := loginform.LoginForm{}
 	form.Email = r.FormValue(loginform.FieldEmail)
 	form.Passwd = r.FormValue(loginform.FieldPassword)
-	form.Validate(repo)
+	form.Validate(l.userRepo)
 
 	if !form.IsValid() {
 		component := logintemplate.LoginForm(form)
-		component.Render(l.ctx, w)
+		component.Render(r.Context(), w)
 		return
 	}
 

@@ -21,17 +21,27 @@ func (lf *LoginForm) Validate(repo repositories.UserRepo) {
 	lf.isValid = true
 	lf.Errors = make(map[string]string, 2)
 
-	if !validators.IsEmailStringValid(lf.Email) {
-		lf.Errors[FieldEmail] = "Email address is invalid"
+	if lf.Passwd == "" {
+		lf.Errors[FieldPassword] = "Password is required"
 		lf.isValid = false
-	} else if !validators.IsEmailNew(lf.Email, repo) {
-		lf.Errors[FieldEmail] = "This email is already taken"
-		lf.isValid = false
+	} else {
+		if !validators.IsEmailStringValid(lf.Email) {
+			lf.Errors[FieldEmail] = "Email address is invalid"
+			lf.isValid = false
+		}
 	}
 
-	if validators.IsPasswordLenValid(lf.Passwd) {
-		lf.Errors[FieldPassword] = "Password should be at least 8 chars long"
+	if lf.Email == "" {
+		lf.Errors[FieldEmail] = "Email is required"
 		lf.isValid = false
+	} else {
+		if validators.IsPasswordLenValid(lf.Passwd) {
+			lf.Errors[FieldEmail] = "Invalid email or password"
+			lf.isValid = false
+		} else if !validators.IsPasswordCharsValid(lf.Passwd) {
+			lf.Errors[FieldEmail] = "Invalid email or password"
+			lf.isValid = false
+		}
 	}
 }
 

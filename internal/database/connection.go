@@ -13,6 +13,7 @@ import (
 type DBCon interface {
 	GetDB() *sql.DB
 	Query(ctx context.Context, query string) (*sql.Rows, error)
+	QueryRow(ctx context.Context, query string, args ...any) *sql.Row
 	Prepare(ctx context.Context, query string) (*sql.Stmt, error)
 	Close()
 }

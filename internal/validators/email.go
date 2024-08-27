@@ -1,6 +1,7 @@
 package validators
 
 import (
+	"context"
 	"regexp"
 
 	"homecomp/internal/repositories"
@@ -13,7 +14,7 @@ func IsEmailStringValid(email string) bool {
 	return re.MatchString(email)
 }
 
-func IsEmailNew(email string, repo repositories.UserRepo) bool {
-	user := repo.GetUserByEmail(email)
+func IsEmailNew(ctx context.Context, email string, repo repositories.UserRepo) bool {
+	user := repo.GetUserByEmail(ctx, email)
 	return user.ID == 0
 }
