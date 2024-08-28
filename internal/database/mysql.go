@@ -55,7 +55,7 @@ func (dcn *dbCon) Prepare(ctx context.Context, query string) (*sql.Stmt, error) 
 }
 
 func (dcn *dbCon) QueryRow(ctx context.Context, query string, args ...any) *sql.Row {
-	return dcn.db.QueryRowContext(ctx, query, args)
+	return dcn.db.QueryRowContext(ctx, query, args...)
 }
 
 func (dcn *dbCon) Close() {

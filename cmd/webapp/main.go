@@ -13,22 +13,27 @@ import (
 )
 
 func main() {
+	// Load config and context
 	conf, err := configs.NewConfig()
 	ctx, cancel := context.WithTimeout(context.Background(), conf.App.Timeout)
 	defer cancel()
 
+	// Create server
 	mux := http.NewServeMux()
 	if err != nil {
 		panic(fmt.Sprintf("cannot load configuration: %s", err.Error()))
 	}
-	db, err := database.NewConnection(conf.Database)
+
+	// Load database and repos
+	myDB, err := database.NewConnection(conf.Database)
 	if err != nil {
 		panic(fmt.Sprintf("cannot connect to database: %s", err.Error()))
 	}
+	inMemory := database.NewInMemoryDB()
 
-	userRepo := repositories.NewUserRepo(db)
+	userRepo := repositories.NewUserRepo(myDB)
 
-	handlers.NewLoginHandler(conf, userRepo).Handle(mux)
+	handlers.NewLoginHandler(conf, inMemory, userRepo).Handle(mux)
 
 	mux.Handle("GET /public/", http.StripPrefix("/public/", http.FileServer(http.Dir("./public"))))
 

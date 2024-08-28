@@ -16,7 +16,7 @@ const (
 
 type UserRepo interface {
 	CreateUser(ctx context.Context, data UserRow) error
-	GetUserByEmail(ctx context.Context, email string) UserRow
+	GetUserByEmail(ctx context.Context, email string) *UserRow
 }
 
 type UserRow struct {
@@ -47,12 +47,16 @@ func (ur *userRepo) CreateUser(ctx context.Context, data UserRow) error {
 	return err
 }
 
-func (ur *userRepo) GetUserByEmail(ctx context.Context, email string) UserRow {
+func (ur *userRepo) GetUserByEmail(ctx context.Context, email string) *UserRow {
 	var id uint32
 	query := fmt.Sprintf("select %s from %s where %s = ?", UserFieldID, UserTableName, UserFieldEmail)
 	ur.db.QueryRow(ctx, query, email).Scan(&id)
 
-	return UserRow{
+	if id == 0 {
+		return nil
+	}
+
+	return &UserRow{
 		ID:    id,
 		Email: email,
 	}

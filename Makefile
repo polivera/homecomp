@@ -4,6 +4,9 @@ install-local:
 	go install -tags 'mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 	templ generate
 
+mod-dump:
+	go mod tidy && go mod vendor
+
 tailwind-watch:
 	tailwindcss -i ./pkg/web/templates/tailwind.css -o ./public/css/main.css --watch
 
