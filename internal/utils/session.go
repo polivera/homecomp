@@ -37,3 +37,13 @@ func LoggedInUser(r *http.Request, memDB database.InMemoryDB) (uint32, error) {
 	}
 	return uID, nil
 }
+
+func UserLoggedMiddleware(next http.HandlerFunc, memDB database.InMemoryDB) http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if _, err := LoggedInUser(r, memDB); err != nil {
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}

@@ -27,13 +27,9 @@ func NewDashboardHandler(cnf configs.Config, memDB database.InMemoryDB) Dashboar
 }
 
 func (dh *dashboardHandler) Handle(mux *http.ServeMux) {
-	mux.HandleFunc("GET /dashboard", dh.showDashboard)
+	mux.HandleFunc("GET /dashboard", utils.UserLoggedMiddleware(dh.showDashboard, dh.memDB))
 }
 
 func (dh *dashboardHandler) showDashboard(w http.ResponseWriter, r *http.Request) {
-	if _, err := utils.LoggedInUser(r, dh.memDB); err != nil {
-		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		return
-	}
 	fmt.Fprintln(w, "This is the dashboard")
 }
