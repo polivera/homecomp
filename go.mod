@@ -6,6 +6,7 @@ require (
 	github.com/a-h/templ v0.2.771
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/kelseyhightower/envconfig v1.4.0
+	golang.org/x/crypto v0.26.0
 )
 
 require (

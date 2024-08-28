@@ -7,24 +7,24 @@ import (
 )
 
 type InMemoryDB interface {
-	Set(ctx context.Context, key string, value string) error
-	Get(ctx context.Context, key string) (string, error)
+	Set(ctx context.Context, key string, value uint32) error
+	Get(ctx context.Context, key string) (uint32, error)
 	Remove(ctx context.Context, key string) error
 	HasKey(ctx context.Context, key string) bool
 }
 
 type inMemoryDatabase struct {
-	store map[string]string
+	store map[string]uint32
 	mu    sync.RWMutex
 }
 
 func NewInMemoryDB() InMemoryDB {
 	return &inMemoryDatabase{
-		store: make(map[string]string),
+		store: make(map[string]uint32),
 	}
 }
 
-func (md *inMemoryDatabase) Set(ctx context.Context, key string, value string) error {
+func (md *inMemoryDatabase) Set(ctx context.Context, key string, value uint32) error {
 	select {
 	case <-ctx.Done():
 		return ctx.Err()
@@ -36,16 +36,16 @@ func (md *inMemoryDatabase) Set(ctx context.Context, key string, value string) e
 	}
 }
 
-func (md *inMemoryDatabase) Get(ctx context.Context, key string) (string, error) {
+func (md *inMemoryDatabase) Get(ctx context.Context, key string) (uint32, error) {
 	select {
 	case <-ctx.Done():
-		return "", ctx.Err()
+		return 0, ctx.Err()
 	default:
 		md.mu.RLock()
-		defer md.mu.Unlock()
+		defer md.mu.RUnlock()
 		value, exist := md.store[key]
 		if !exist {
-			return "", errors.New("key does not exist")
+			return 0, errors.New("key does not exist")
 		}
 		return value, nil
 	}

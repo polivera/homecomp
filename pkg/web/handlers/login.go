@@ -1,19 +1,16 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
-	"time"
+
+	"golang.org/x/crypto/bcrypt"
 
 	"homecomp/internal/configs"
 	"homecomp/internal/database"
 	loginform "homecomp/internal/forms/login"
 	"homecomp/internal/repositories"
+	"homecomp/internal/utils"
 	logintemplate "homecomp/pkg/web/templates/login"
-)
-
-const (
-	cookieName string = "hcmpauth"
 )
 
 type LoginHandler interface {
@@ -21,31 +18,35 @@ type LoginHandler interface {
 	showLoginForm(w http.ResponseWriter, _ *http.Request)
 }
 
-type loginHaddler struct {
+type loginHandler struct {
 	conf     configs.Config
 	memDB    database.InMemoryDB
 	userRepo repositories.UserRepo
 }
 
 func NewLoginHandler(cnf configs.Config, memDB database.InMemoryDB, userRepo repositories.UserRepo) LoginHandler {
-	return &loginHaddler{
+	return &loginHandler{
 		conf:     cnf,
 		memDB:    memDB,
 		userRepo: userRepo,
 	}
 }
 
-func (l *loginHaddler) Handle(mux *http.ServeMux) {
+func (l *loginHandler) Handle(mux *http.ServeMux) {
 	mux.HandleFunc("GET /login", l.showLoginForm)
 	mux.HandleFunc("POST /login", l.loginSubmit)
 }
 
-func (l *loginHaddler) showLoginForm(w http.ResponseWriter, r *http.Request) {
+func (l *loginHandler) showLoginForm(w http.ResponseWriter, r *http.Request) {
+	if _, err := utils.LoggedInUser(r, l.memDB); err == nil {
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+		return
+	}
 	component := logintemplate.LoginPage(l.conf.Page)
 	component.Render(r.Context(), w)
 }
 
-func (l *loginHaddler) loginSubmit(w http.ResponseWriter, r *http.Request) {
+func (l *loginHandler) loginSubmit(w http.ResponseWriter, r *http.Request) {
 	form := loginform.LoginForm{}
 	form.Email = r.FormValue(loginform.FieldEmail)
 	form.Passwd = r.FormValue(loginform.FieldPassword)
@@ -59,20 +60,21 @@ func (l *loginHaddler) loginSubmit(w http.ResponseWriter, r *http.Request) {
 
 	dbUser := l.userRepo.GetUserByEmail(r.Context(), form.Email)
 	if dbUser == nil {
-		form.Errors[loginform.FieldEmail] = "User not found "
+		form.Errors[loginform.FieldEmail] = "Invalid user or password"
 		component := logintemplate.LoginForm(form)
 		component.Render(r.Context(), w)
 		return
 	}
 
-	http.SetCookie(w, &http.Cookie{
-		Name:  cookieName,
-		Value: "something random", //TODO: Write a randomizer
-		Path:  "/",
-		// Domain:   "",
-		Expires:  time.Now().Add(24 * time.Hour),
-		HttpOnly: true,
-	})
+	err := bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(form.Passwd))
+	if err != nil {
+		form.Errors[loginform.FieldEmail] = "Invalid user or password"
+		component := logintemplate.LoginForm(form)
+		component.Render(r.Context(), w)
+		return
+	}
 
-	fmt.Fprintln(w, dbUser)
+	utils.LoginUser(*dbUser, l.memDB, w, r)
+
+	w.Header().Add("HX-Redirect", "/dashboard")
 }

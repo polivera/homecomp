@@ -48,16 +48,27 @@ func (ur *userRepo) CreateUser(ctx context.Context, data UserRow) error {
 }
 
 func (ur *userRepo) GetUserByEmail(ctx context.Context, email string) *UserRow {
-	var id uint32
-	query := fmt.Sprintf("select %s from %s where %s = ?", UserFieldID, UserTableName, UserFieldEmail)
-	ur.db.QueryRow(ctx, query, email).Scan(&id)
+	var (
+		id     uint32
+		passwd string
+	)
+	query := fmt.Sprintf(
+		"SELECT %s, %s FROM %s WHERE %s = ?",
+		UserFieldID,
+		UserFieldPasswd,
+		UserTableName,
+		UserFieldEmail,
+	)
+
+	ur.db.QueryRow(ctx, query, email).Scan(&id, &passwd)
 
 	if id == 0 {
 		return nil
 	}
 
 	return &UserRow{
-		ID:    id,
-		Email: email,
+		ID:       id,
+		Email:    email,
+		Password: passwd,
 	}
 }

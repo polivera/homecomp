@@ -15,7 +15,7 @@ import (
 func main() {
 	// Load config and context
 	conf, err := configs.NewConfig()
-	ctx, cancel := context.WithTimeout(context.Background(), conf.App.Timeout)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// Create server
@@ -34,6 +34,7 @@ func main() {
 	userRepo := repositories.NewUserRepo(myDB)
 
 	handlers.NewLoginHandler(conf, inMemory, userRepo).Handle(mux)
+	handlers.NewDashboardHandler(conf, inMemory).Handle(mux)
 
 	mux.Handle("GET /public/", http.StripPrefix("/public/", http.FileServer(http.Dir("./public"))))
 
