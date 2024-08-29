@@ -13,7 +13,7 @@ tailwind-watch:
 tailwind-build:
 	tailwindcss -i ./pkg/web/templates/tailwind.css -o ./public/css/main.css --minify
 
-up-database:
+db-up:
 	docker compose up -d --force-recreate database
 
 db-connect:

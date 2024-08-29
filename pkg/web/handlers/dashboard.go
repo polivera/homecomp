@@ -1,12 +1,12 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"homecomp/internal/configs"
 	"homecomp/internal/database"
 	"homecomp/internal/utils"
+	dashboardtemplate "homecomp/pkg/web/templates/dashboard"
 )
 
 type DashboardHandler interface {
@@ -31,5 +31,5 @@ func (dh *dashboardHandler) Handle(mux *http.ServeMux) {
 }
 
 func (dh *dashboardHandler) showDashboard(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "This is the dashboard")
+	dashboardtemplate.DashboardPage(dh.conf.Page).Render(r.Context(), w)
 }

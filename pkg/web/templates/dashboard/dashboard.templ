@@ -1,0 +1,17 @@
+package dashboard
+
+import (
+	"homecomp/internal/configs"
+	"homecomp/pkg/web/templates"
+)
+
+templ dashboard() {
+	<div>this is so cool page content section </div>
+}
+
+func DashboardPage(conf configs.PageConfig) templ.Component {
+	return templates.HomeLayout(
+		dashboard(),
+		conf,
+	)
+}

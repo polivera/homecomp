@@ -19,8 +19,16 @@ templ homeLayout(contents templ.Component, title string, lang string) {
 	<!DOCTYPE html>
 	<html lang={ lang }>
 		@header(title)
-		<body class="bg-red-500">
-			@contents
+		<body
+			class="flex flex-col h-screen 
+            text-hc-text-light dark:text-hc-text-dark
+            bg-hc-bg-light dark:bg-hc-bg-dark"
+		>
+			<div class="page">
+				@headerBar()
+				@navBar()
+				@contents
+			</div>
 		</body>
 		@footer()
 		<script src="./public/js/htmx.min.js"></script>
@@ -36,7 +44,13 @@ templ emptyLayout(contents templ.Component, title string, lang string) {
             text-hc-text-light dark:text-hc-text-dark
             bg-hc-bg-light dark:bg-hc-bg-dark"
 		>
-			@contents
+			<div
+				class="flex flex-col h-screen 
+            text-hc-text-light dark:text-hc-text-dark
+            bg-hc-bg-light dark:bg-hc-bg-dark"
+			>
+				@contents
+			</div>
 		</body>
 		@footer()
 		<script src="./public/js/htmx.min.js"></script>
