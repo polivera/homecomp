@@ -1,0 +1,39 @@
+package components
+
+type InputType templ.Component
+
+type InputData struct {
+	Name        string
+	Required    bool
+	Value       string
+	Placeholder string
+	Label       string
+	Error       string
+}
+
+const commonInputClasses = `
+            bg-hc-bg-light dark:bg-hc-bg-dark
+            border border-hc-border-light dark:border-hc-border-dark rounded
+            px-[0.75rem] py-[0.5rem] text-[0.87rem]
+`
+
+templ InputText(data InputData) {
+	<input
+		type="email"
+		name={ data.Name }
+		id={ data.Name }
+		placeholder={ data.Placeholder }
+		class={ commonInputClasses }
+		value={ data.Value }
+	/>
+}
+
+templ InputPassword(data InputData) {
+	<input
+		type="password"
+		name={ data.Name }
+		id={ data.Name }
+		placeholder={ data.Placeholder }
+		class={ commonInputClasses }
+	/>
+}

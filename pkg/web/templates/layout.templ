@@ -1,6 +1,6 @@
 package templates
 
-import "homecomp/pkg/configs"
+import "homecomp/internal/configs"
 
 templ header(title string) {
 	<head>
@@ -23,6 +23,7 @@ templ homeLayout(contents templ.Component, title string, lang string) {
 			@contents
 		</body>
 		@footer()
+		<script src="./public/js/htmx.min.js"></script>
 	</html>
 }
 
@@ -30,17 +31,22 @@ templ emptyLayout(contents templ.Component, title string, lang string) {
 	<!DOCTYPE html>
 	<html lang={ lang }>
 		@header(title)
-		<body class="flex flex-col h-screen justify-center">
+		<body
+			class="flex flex-col h-screen justify-center 
+            text-hc-text-light dark:text-hc-text-dark
+            bg-hc-bg-light dark:bg-hc-bg-dark"
+		>
 			@contents
 		</body>
 		@footer()
+		<script src="./public/js/htmx.min.js"></script>
 	</html>
 }
 
-func HomeLayout(content templ.Component, conf configs.Config) templ.Component {
+func HomeLayout(content templ.Component, conf configs.PageConfig) templ.Component {
 	return homeLayout(content, conf.PageTitle, conf.PageLanguage)
 }
 
-func EmptyLayout(content templ.Component, conf configs.Config) templ.Component {
+func EmptyLayout(content templ.Component, conf configs.PageConfig) templ.Component {
 	return emptyLayout(content, conf.PageTitle, conf.PageLanguage)
 }

@@ -3,24 +3,54 @@ package main
 import (
 	"context"
 	"fmt"
+	"net"
 	"net/http"
 
-	"homecomp/pkg/configs"
-	"homecomp/pkg/handlers/auth"
+	"homecomp/internal/configs"
+	"homecomp/internal/database"
+	"homecomp/internal/repositories"
+	"homecomp/pkg/web/handlers"
 )
 
 func main() {
-	mux := http.NewServeMux()
+	// Load config and context
 	conf, err := configs.NewConfig()
-	if err != nil {
-		panic("cannot load configuration")
-	}
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-	auth.NewLoginHandler(conf, ctx).Handle(mux)
+	// Create server
+	mux := http.NewServeMux()
+	if err != nil {
+		panic(fmt.Sprintf("cannot load configuration: %s", err.Error()))
+	}
+
+	// Load database and repos
+	myDB, err := database.NewConnection(conf.Database)
+	if err != nil {
+		panic(fmt.Sprintf("cannot connect to database: %s", err.Error()))
+	}
+	inMemory := database.NewInMemoryDB()
+
+	userRepo := repositories.NewUserRepo(myDB)
+
+	handlers.NewLoginHandler(conf, inMemory, userRepo).Handle(mux)
+	handlers.NewDashboardHandler(conf, inMemory).Handle(mux)
 
 	mux.Handle("GET /public/", http.StripPrefix("/public/", http.FileServer(http.Dir("./public"))))
 
-	fmt.Println("Starting server on port 8008")
-	http.ListenAndServe("localhost:8008", mux)
+	serverAddress := fmt.Sprintf("%s:%d", conf.App.Host, conf.App.Port)
+
+	srv := &http.Server{
+		Addr:    serverAddress,
+		Handler: mux,
+		BaseContext: func(_ net.Listener) context.Context {
+			return ctx
+		},
+	}
+
+	fmt.Printf("Starting server on %s\n", serverAddress)
+	err = srv.ListenAndServe()
+	if err != nil {
+		panic(err.Error())
+	}
 }

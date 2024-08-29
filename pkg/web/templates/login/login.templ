@@ -1,0 +1,61 @@
+package login
+
+import (
+	"homecomp/internal/configs"
+	loginform "homecomp/internal/forms/login"
+	"homecomp/pkg/web/templates"
+	"homecomp/pkg/web/templates/components"
+)
+
+templ login(componentMap map[string]components.InputData) {
+	<div
+		class=" max-w-[30rem] w-full mx-auto
+                bg-hc-bg-alt-light dark:bg-hc-bg-alt-dark
+                border border-hc-border-light dark:border-hc-border-dark"
+	>
+		<div class="p-[2.5rem]">
+			<h2 class="text-[1.5rem] w-full content-center text-center mb-[1.5rem]">Login Form</h2>
+			@loginForm(componentMap)
+		</div>
+	</div>
+}
+
+templ loginForm(componentMap map[string]components.InputData) {
+	@components.FormWrapper("/login") {
+		@components.FormInput(componentMap["email"], components.InputText)
+		@components.FormInput(componentMap["password"], components.InputPassword)
+		@components.FormButton("Log In")
+	}
+}
+
+func LoginPage(conf configs.PageConfig) templ.Component {
+	return templates.EmptyLayout(
+		login(getComponentMap(loginform.LoginForm{})),
+		conf,
+	)
+}
+
+func LoginForm(fields loginform.LoginForm) templ.Component {
+	return loginForm(getComponentMap(fields))
+}
+
+func getComponentMap(fields loginform.LoginForm) map[string]components.InputData {
+	componentMap := make(map[string]components.InputData, 2)
+	componentMap[loginform.FieldEmail] = components.InputData{
+		Label:       "Email address",
+		Required:    true,
+		Name:        loginform.FieldEmail,
+		Placeholder: "your@email.com",
+		Value:       fields.Email,
+		Error:       fields.Errors[loginform.FieldEmail],
+	}
+	componentMap[loginform.FieldPassword] = components.InputData{
+		Label:       "Password",
+		Required:    true,
+		Name:        loginform.FieldPassword,
+		Placeholder: "Your Password",
+		Value:       "",
+		Error:       fields.Errors[loginform.FieldPassword],
+	}
+	return componentMap
+}

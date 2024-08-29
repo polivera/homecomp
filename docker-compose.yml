@@ -1,0 +1,10 @@
+services:
+  database:
+    image: mariadb
+    ports:
+      - ${HCMP_DB_PORT}:3306
+    environment:
+      MARIADB_RANDOM_ROOT_PASSWORD: 1
+      MARIADB_USER: ${HCMP_DB_USER}
+      MARIADB_PASSWORD: ${HCMP_DB_PASS}
+      MARIADB_DATABASE: ${HCMP_DB_NAME}
